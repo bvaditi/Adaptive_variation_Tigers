@@ -1,0 +1,16 @@
+#$ -cwd
+#$ -pe smp 32
+
+/softwares/bcftools-1.6/bcftools mpileup -R 50k_Intergenic_region_Sample.bed --bam-list ../bam_list -a FORMAT/AD,FORMAT/ADF,FORMAT/DP,INFO/AD -f ~/Machali_tiger_reference/Machali_Racon_2_80bp.fasta | /softwares/bcftools-1.6/bcftools call -m -Oz -f GQ -o Pan_tig_bcftools_Intergenic_50k_Sample.vcf.gz
+
+
+/softwares/vcftoolsV13/bin/vcftools --gzvcf Pan_tig_bcftools_Intergenic_50k_complete.vcf.gz --mac 3 --remove-indels --minQ 30 --minGQ 30 --hwe 0.0001 --recode --out ~/November2023/Pan_tig_bcftools_Intergenic_50k_complete_variants_mac3_removeindels_minQ30_minGQ30_hwe0.0001
+/softwares/bcftools-1.6/bcftools norm -D -d both -f ~/Machali_tiger_reference/Machali_Racon_2_80bp.fasta Pan_tig_bcftools_Intergenic_50k_complete.vcf.gz -O z -o ~/November2023/Pan_tig_bcftools_Intergenic_50k_complete_uniq.vcf.gz
+
+#$ -cwd
+#$ -pe smp 32
+
+/softwares/vcftoolsV13/bin/vcftools --gzvcf Pan_tig_bcftools_Intergenic_50k_complete.vcf.gz --max-maf 0 --remove-indels --minQ 30 --minGQ 30 --hwe 0.0001 --recode --out ~/November2023/Pan_tig_bcftools_Intergenic_50k_complete_invariants_removeindels_minQ30_minGQ30_hwe0.0001
+
+#$ -pe smp 32
+java -jar /softwares/picard/build/libs/picard.jar MergeVcfs I=June2023/Tig_ControlFiles/Pan_tig_bcftools_Intergenic_50k_AChr.recode.vcf.gz I=June2023/Tig_ControlFiles/Pan_tig_bcftools_Intergenic_50k_B1.vcf.gz I=June2023/Tig_ControlFiles/Pan_tig_bcftools_Intergenic_50k_B2.vcf.gz I=June2023/Tig_ControlFiles/Pan_tig_bcftools_Intergenic_50k_B3.vcf.gz I=June2023/Tig_ControlFiles/Pan_tig_bcftools_Intergenic_50k_B4.vcf.gz I=June2023/Tig_ControlFiles/Pan_tig_bcftools_Intergenic_50k_C1.vcf.gz I=June2023/Tig_ControlFiles/Pan_tig_bcftools_Intergenic_50k_C2.vcf.gz I=June2023/Tig_ControlFiles/Pan_tig_bcftools_Intergenic_50k_2.vcf.gz O=June2023/Tig_ControlFiles/Pan_tig_bcftools_Intergenic_50k_complete.vcf.gz
